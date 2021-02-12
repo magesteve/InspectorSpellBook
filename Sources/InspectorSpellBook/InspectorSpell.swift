@@ -8,6 +8,8 @@
 import Foundation
 import Cocoa
 
+// MARK: Enums
+
 public enum InspectorState: Int {
     case start = 0
     case closed
@@ -18,6 +20,8 @@ public enum InspectorKind: Int {
     case right = 0
     case left
 }
+
+// MARK: Structures
 
 public struct InspectorPane {
     public var ident: String
@@ -31,7 +35,9 @@ public struct InspectorPane {
     }
 }
 
-public struct InspectorStruct {
+// MARK: InspectorSpell Class
+
+public struct InspectorSpell {
     
     private var listPane: [InspectorPane] = []
     private var size: CGFloat = 0.0
@@ -100,7 +106,6 @@ public struct InspectorStruct {
     public func change(pane:InspectorPane) {
         self.sideView?.selectTabViewItem(pane.item)
     }
-
     
     mutating public func add(ident: String, viewController: NSViewController) {
         guard isValid else { return }
