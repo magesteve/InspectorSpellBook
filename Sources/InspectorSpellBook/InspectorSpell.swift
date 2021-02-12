@@ -37,7 +37,7 @@ public struct InspectorPane {
 
 // MARK: InspectorSpell Class
 
-public struct InspectorSpell {
+public class InspectorSpell {
     
     private var listPane: [InspectorPane] = []
     private var size: CGFloat = 0.0
