@@ -107,7 +107,7 @@ public class InspectorSpell {
         self.sideView?.selectTabViewItem(pane.item)
     }
     
-    mutating public func add(ident: String, viewController: NSViewController) {
+    public func add(ident: String, viewController: NSViewController) {
         guard isValid else { return }
         
         let item = NSTabViewItem(identifier: ident)
@@ -124,7 +124,7 @@ public class InspectorSpell {
         }
     }
     
-    mutating public func tap(ident: String) {
+    public func tap(ident: String) {
         guard isValid, listPane.count>0 else { return }
         
         var foundPane: InspectorPane?
