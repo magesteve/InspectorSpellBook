@@ -8,6 +8,19 @@
 import Foundation
 import Cocoa
 
+// MARK: Protocol
+
+/// Optopma; Protocol for controllers to manage Inspector on View Controller
+public protocol InspectorControllerProtocol: NSViewController {
+    
+    /// Required inspector for protocol for optional left panel
+    var inspectorLeft: InspectorSpell? { get }
+    
+    /// Required inspector for protocol for optional right panel
+    var inspectorRight: InspectorSpell? { get }
+
+}
+
 // MARK: Enums
 
 public enum InspectorState: Int {
@@ -124,20 +137,23 @@ public class InspectorSpell {
         }
     }
     
-    public func tap(ident: String) {
-        guard isValid, listPane.count>0 else { return }
-        
-        var foundPane: InspectorPane?
+    private func findPane(ident: String) -> InspectorPane {
         for pane in listPane {
             if pane.ident==ident {
-                foundPane = pane
+                return pane
             }
         }
-        let newPane = foundPane ?? listPane[0]
+        
+        return listPane[0]
+    }
+    
+    public func open(ident: String) {
+        guard isValid, listPane.count>0 else { return }
+        
+        let newPane = findPane(ident: ident)
         
         if state == .closed {
             if currentPane != newPane.ident {
-                currentPane = newPane.ident
                 change(pane:newPane)
             }
             
@@ -155,21 +171,43 @@ public class InspectorSpell {
             state = .open
         }
         else if state == .open {
+            if currentPane != newPane.ident {
+                change(pane:newPane)
+            }
+        }
+    }
+    
+    public func close() {
+        guard isValid, listPane.count>0 else { return }
+        
+        if state == .open {
+            NSAnimationContext.runAnimationGroup({context in
+                context.duration = 0.5
+                context.allowsImplicitAnimation = true
+
+                mainEdgeConstraint?.constant = 0.0
+                sideEdgeConstraint?.constant = delta
+
+                self.contentView?.layoutSubtreeIfNeeded()
+            }, completionHandler:nil)
+
+            state = .closed
+       }
+    }
+    
+    public func tap(ident: String) {
+        guard isValid, listPane.count>0 else { return }
+        
+        if state == .closed {
+            open(ident: ident)
+        }
+        else if state == .open {
+            let newPane = findPane(ident: ident)
+            
             if currentPane == newPane.ident {
-                NSAnimationContext.runAnimationGroup({context in
-                    context.duration = 0.5
-                    context.allowsImplicitAnimation = true
-
-                    mainEdgeConstraint?.constant = 0.0
-                    sideEdgeConstraint?.constant = delta
-
-                    self.contentView?.layoutSubtreeIfNeeded()
-                }, completionHandler:nil)
-
-                state = .closed
+                close()
             }
             else {
-                currentPane = newPane.ident
                 change(pane:newPane)
             }
         }
