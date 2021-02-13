@@ -52,20 +52,20 @@ public struct InspectorPane {
 
 public class InspectorSpell {
     
-    private var listPane: [InspectorPane] = []
-    private var size: CGFloat = 0.0
-    private var delta: CGFloat = 0.0
+    public var listPane: [InspectorPane] = []
+    public var size: CGFloat = 0.0
+    public var delta: CGFloat = 0.0
 
-    private var kind: InspectorKind = .right
-    private var state: InspectorState = .start
-    private var currentPane: String = ""
-    private var mainEdgeConstraint: NSLayoutConstraint?
-    private var sideEdgeConstraint: NSLayoutConstraint?
+    public var kind: InspectorKind = .right
+    public var state: InspectorState = .start
+    public var currentPane: String = ""
+    public var mainEdgeConstraint: NSLayoutConstraint?
+    public var sideEdgeConstraint: NSLayoutConstraint?
 
-    private weak var viewController: NSViewController?
-    private weak var mainView: NSView?
-    private weak var contentView: NSView?
-    private weak var sideView: NSTabView?
+    public weak var viewController: NSViewController?
+    public weak var mainView: NSView?
+    public weak var contentView: NSView?
+    public weak var sideView: NSTabView?
 
     public var isValid: Bool { state !=  .start}
     
@@ -137,7 +137,7 @@ public class InspectorSpell {
         }
     }
     
-    private func findPane(ident: String) -> InspectorPane {
+    public func findPane(ident: String) -> InspectorPane {
         for pane in listPane {
             if pane.ident==ident {
                 return pane
