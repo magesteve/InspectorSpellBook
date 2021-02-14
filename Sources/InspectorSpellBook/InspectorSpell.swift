@@ -118,6 +118,7 @@ public class InspectorSpell {
     
     public func change(pane:InspectorPane) {
         self.sideView?.selectTabViewItem(pane.item)
+        currentPane = pane.ident
     }
     
     public func add(ident: String, viewController: NSViewController) {
@@ -131,8 +132,6 @@ public class InspectorSpell {
         listPane.append(pane)
         
         if listPane.count==1 {
-            currentPane = pane.ident
-
             change(pane: pane)
         }
     }
