@@ -8,7 +8,7 @@
 import Foundation
 import Cocoa
 
-// MARK: Protocol
+// MARK: - Protocol
 
 /// Optopma; Protocol for controllers to manage Inspector on View Controller
 public protocol InspectorControllerProtocol: NSViewController {
@@ -21,26 +21,38 @@ public protocol InspectorControllerProtocol: NSViewController {
 
 }
 
-// MARK: Enums
+// MARK: - Enums
 
+/// State of the Inspector (Start unable to open/close)
 public enum InspectorState: Int {
     case start = 0
     case closed
     case open
 }
 
+/// Kind of Inspector (Orientation)
 public enum InspectorKind: Int {
     case right = 0
     case left
 }
 
-// MARK: Structures
+// MARK: - Structures
 
+/// Information regarding a pane (with View Controller) that can be displayed in the Inspector. Includes Indentity & TabViewItem.
 public struct InspectorPane {
+
+    // MARK: - Variables
+    
+    /// Identity of pane (unique string)
     public var ident: String
+    
+    /// View Controller (with View) to place in Inspector.
     public var viewController: NSViewController
+    
+    /// TabViewItem of pane.
     public var item: NSTabViewItem
     
+    // MARK: - Lifecycle
     init(ident: String, viewController: NSViewController, item: NSTabViewItem) {
         self.ident = ident
         self.viewController = viewController
@@ -48,9 +60,13 @@ public struct InspectorPane {
     }
 }
 
-// MARK: InspectorSpell Class
+// MARK: - InspectorSpell Class
 
 public class InspectorSpell {
+    
+    // MARK: - Variables
+    
+    // Majority of these should not be accessed directly.
     
     public var listPane: [InspectorPane] = []
     public var size: CGFloat = 0.0
@@ -69,6 +85,14 @@ public class InspectorSpell {
 
     public var isValid: Bool { state !=  .start}
     
+    // MARK: - Lifecycle
+    
+    /// Init for Inspecter
+    /// - Parameters:
+    ///   - kind: InspectorKind showing orientation
+    ///   - viewController: NSViewController that Inspector will attach to
+    ///   - mainView: NSView main view (not content view), that is pinned with constraints on content view.
+    ///   - sideView: NSView side view to slide, that is pinned with constraints on content view.
     public init(kind: InspectorKind = .right, viewController: NSViewController, mainView: NSView, sideView: NSTabView) {
         var foundMainEdgeConstraint: NSLayoutConstraint?
         var foundSideConstraint: NSLayoutConstraint?
@@ -116,11 +140,15 @@ public class InspectorSpell {
         self.contentView?.layoutSubtreeIfNeeded()
     }
     
+    // MARK: - Public Functions
+
+    /// Change Inspectr pane to given pane
     public func change(pane:InspectorPane) {
         self.sideView?.selectTabViewItem(pane.item)
         currentPane = pane.ident
     }
     
+    /// Add a view controller with given identity as a new pane.
     public func add(ident: String, viewController: NSViewController) {
         guard isValid else { return }
         
@@ -136,6 +164,7 @@ public class InspectorSpell {
         }
     }
     
+    /// Find pane with given identity and return it.
     public func findPane(ident: String) -> InspectorPane {
         for pane in listPane {
             if pane.ident==ident {
@@ -146,6 +175,7 @@ public class InspectorSpell {
         return listPane[0]
     }
     
+    /// Open Pane with given identity.  Animate open if needed.
     public func open(ident: String) {
         guard isValid, listPane.count>0 else { return }
         
@@ -176,6 +206,7 @@ public class InspectorSpell {
         }
     }
     
+    /// Animate close the pane if open.
     public func close() {
         guard isValid, listPane.count>0 else { return }
         
@@ -194,6 +225,7 @@ public class InspectorSpell {
        }
     }
     
+    /// Tap the pane with given identity. If open to that pane, close it. If closed, open it. If other pane open, change to new pane.
     public func tap(ident: String) {
         guard isValid, listPane.count>0 else { return }
         
